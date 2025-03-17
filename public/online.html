@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Modo Online - Futbol Game" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modo Online - Futbol Game</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="container game-container">
+      <header>
+        <h1>Modo Online (1 vs 1)</h1>
+        <p id="player-display-online"></p>
+        <!-- Sección para crear o unirse a una sala -->
+        <div id="room-controls">
+          <input type="text" id="room-id" placeholder="Código de sala" />
+          <button id="create-room-btn" class="btn">Crear Sala</button>
+          <button id="join-room-btn" class="btn">Unirse a Sala</button>
+        </div>
+        <p id="online-timer">Tiempo: 01:00</p>
+        <p id="online-score">Puntaje: 0</p>
+      </header>
+
+      <main id="online-game-area">
+        <div id="online-question-container">
+          <p id="online-question-text">Esperando partida...</p>
+          <div id="online-option-area" class="hidden">
+            <!-- Las opciones se mostrarán solo al solicitarlas -->
+            <button id="online-show-options-btn" class="btn">Mostrar Opciones</button>
+          </div>
+          <input type="text" id="online-answer-input" placeholder="Escribe tu respuesta" />
+          <button id="online-submit-btn" class="btn">Comprobar</button>
+        </div>
+      </main>
+
+      <footer>
+        <p>
+          Reglas: 6 niveles (5 preguntas por nivel). Las primeras 5 preguntas se contestan sin opciones. Si pides opciones, se muestran botones y el valor de la pregunta baja.  
+          Puntos: Nivel 1: 1 punto, Niveles 2–6: 2 puntos; si pides opciones, vale 1; con 50/50, 0.5.
+        </p>
+      </footer>
+    </div>
+    <script src="js/online.js"></script>
+  </body>
+</html>
