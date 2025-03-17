@@ -4,12 +4,12 @@
     "description": "Juego de fútbol con modo local y online",
     "main": "server.js",
     "scripts": {
-      "start": "node server.js"
+        "start": "node server.js"
     },
     "author": "Tu Nombre",
     "license": "MIT",
     "dependencies": {
-      "express": "^4.18.2"
+        "express": "^4.18.2",
+        "socket.io": "^4.8.1"
     }
-  }
-  
+}
