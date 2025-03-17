@@ -159,7 +159,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0; /* oculto por defecto */
+    opacity: 0; /* Oculto por defecto */
     pointer-events: none;
     transition: opacity 0.3s ease;
   }
@@ -184,7 +184,7 @@
     cursor: pointer;
   }
   
-  /* Mostrar modal al quitar la clase hidden */
+  /* Mostrar modal */
   .modal.show {
     opacity: 1;
     pointer-events: auto;
