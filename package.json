@@ -1,7 +1,7 @@
 {
-    "name": "futbolmillonario",
+    "name": "futbolgame",
     "version": "1.0.0",
-    "description": "Juego estilo ¿Quién quiere ser millonario? sobre fútbol.",
+    "description": "Juego de fútbol con modo local y online",
     "main": "server.js",
     "scripts": {
       "start": "node server.js"

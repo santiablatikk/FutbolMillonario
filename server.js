@@ -6,11 +6,11 @@ const fs = require("fs/promises");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Servir archivos estáticos desde la carpeta public
+// Servir archivos estáticos de la carpeta public
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
-// Endpoint para obtener las preguntas (asegúrate de llenar el archivo questions.json)
+// Endpoint para cargar preguntas desde el archivo JSON
 app.get("/api/questions", async (req, res) => {
   try {
     const questionsPath = path.join(__dirname, "public", "data", "questions.json");
@@ -18,7 +18,7 @@ app.get("/api/questions", async (req, res) => {
     const questions = JSON.parse(data);
     res.json(questions);
   } catch (error) {
-    console.error("Error al cargar las preguntas:", error);
+    console.error("Error al cargar preguntas:", error);
     res.status(500).json({ error: error.message });
   }
 });
