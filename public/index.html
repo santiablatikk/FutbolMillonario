@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="¿Quién sabe más de fútbol?" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>¿Quién sabe más de fútbol?</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>¿Quién sabe más de fútbol?</h1>
+        <div class="controls">
+          <label for="level-select">Elige nivel:</label>
+          <select id="level-select">
+            <option value="facil">Fácil</option>
+            <option value="media">Media</option>
+            <option value="dificil">Difícil</option>
+          </select>
+          <button id="start-btn">Iniciar</button>
+        </div>
+        <p id="score">Puntaje: 0</p>
+      </header>
+
+      <main>
+        <!-- Comodines -->
+        <div id="comodines-container" class="hidden">
+          <button id="fifty-btn" class="comodin-btn">50/50</button>
+          <button id="skip-btn" class="comodin-btn">Saltear</button>
+        </div>
+
+        <!-- Contenedor de pregunta y opciones -->
+        <div id="question-container" class="hidden">
+          <p id="question-text"></p>
+          <div id="options-container"></div>
+        </div>
+
+        <!-- Botón de siguiente -->
+        <button id="next-btn" class="hidden">Siguiente Pregunta</button>
+      </main>
+
+      <footer>
+        <p>Basado en el estilo de "¿Quién quiere ser millonario?"</p>
+      </footer>
+    </div>
+
+    <!-- Modal de resultado (transición, etc.) -->
+    <div id="modal-result" class="modal hidden">
+      <div class="modal-content">
+        <span id="modal-close" class="close">&times;</span>
+        <h2 id="modal-title">Resultado</h2>
+        <p id="modal-message"></p>
+        <button id="modal-ok-btn">OK</button>
+      </div>
+    </div>
+
+    <!-- Script principal -->
+    <script src="js/main.js"></script>
+  </body>
+</html>
