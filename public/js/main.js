@@ -1,23 +1,22 @@
 // main.js
-
-// Guarda el nombre del jugador al salir de la landing page
 document.addEventListener("DOMContentLoaded", () => {
     const playerNameInput = document.getElementById("player-name");
     const localBtn = document.getElementById("local-btn");
     const onlineBtn = document.getElementById("online-btn");
-  
+    const shareBtn = document.getElementById("share-btn");
+    
     function saveName() {
       const name = playerNameInput.value.trim();
       if (name) {
         sessionStorage.setItem("playerName", name);
+      } else {
+        sessionStorage.setItem("playerName", "Jugador");
       }
     }
-  
+    
     localBtn.addEventListener("click", saveName);
     onlineBtn.addEventListener("click", saveName);
-  
-    // Compartir en redes sociales
-    const shareBtn = document.getElementById("share-btn");
+    
     shareBtn.addEventListener("click", () => {
       const shareData = {
         title: "Futbol Game",

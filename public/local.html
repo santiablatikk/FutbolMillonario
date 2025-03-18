@@ -15,21 +15,17 @@
         <p id="timer">Tiempo: 05:00</p>
         <p id="score">Puntaje: 0</p>
       </header>
-
       <main id="game-area">
         <div id="question-container">
           <p id="question-text">Cargando pregunta...</p>
-          <div id="option-area">
-            <!-- Aquí se mostrarán las opciones solo si el jugador las pide -->
-            <button id="show-options-btn" class="btn">Mostrar Opciones</button>
-          </div>
-          <input type="text" id="answer-input" placeholder="Tu respuesta" />
+          <div id="option-area"></div>
+          <button id="show-options-btn" class="btn">Mostrar Opciones</button>
+          <input type="text" id="answer-input" placeholder="Escribe tu respuesta" autocomplete="off" />
           <button id="submit-btn" class="btn">Comprobar</button>
         </div>
       </main>
-
       <footer>
-        <p>Juega lo más rápido que puedas. Tienes 5 minutos y se permite 1 error.</p>
+        <p>Responde lo más rápido y correctamente posible. ¡Suerte!</p>
       </footer>
     </div>
     <script src="js/local.js"></script>

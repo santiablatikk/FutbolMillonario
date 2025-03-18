@@ -15,6 +15,7 @@ const optionArea = document.getElementById("option-area");
 const answerInput = document.getElementById("answer-input");
 const submitBtn = document.getElementById("submit-btn");
 const showOptionsBtn = document.getElementById("show-options-btn");
+const floatingMsg = document.getElementById("floating-msg"); // Si existe en el HTML (puedes definirlo en local.html o usar alert)
 
 document.addEventListener("DOMContentLoaded", () => {
   const name = sessionStorage.getItem("playerName") || "Jugador";
@@ -27,7 +28,7 @@ async function loadQuestions() {
   try {
     const res = await fetch("/api/questions");
     const data = await res.json();
-    // Asumimos que para el modo local se usan las preguntas del nivel "facil"
+    // Usamos preguntas del nivel "facil" para el modo local
     questions = data["facil"];
     showQuestion();
   } catch (error) {
@@ -52,15 +53,27 @@ submitBtn.addEventListener("click", () => {
   const currentQ = questions[currentIndex];
   const playerAnswer = answerInput.value.trim();
   if (playerAnswer === "") return;
-
-  // Comparar sin opciones
-  if (playerAnswer.toLowerCase() === currentQ.respuesta_correcta.toLowerCase()) {
-    score += 1; // cada respuesta correcta suma 1 punto
+  
+  // Normalización para eliminar tildes y dieresis
+  const normPlayerAnswer = normalizeString(playerAnswer);
+  const normCorrectAnswer = normalizeString(currentQ.respuesta_correcta);
+  
+  // Calcular distancia de Levenshtein para errores leves
+  const distance = levenshteinDistance(normPlayerAnswer, normCorrectAnswer);
+  
+  if (normPlayerAnswer === normCorrectAnswer || distance <= 1) {
+    score += 1;
   } else {
-    mistakes++;
-    if (mistakes > 1) {
-      endGame();
+    // Si es incompleta (prefijo) se muestra mensaje flotante
+    if (normCorrectAnswer.startsWith(normPlayerAnswer) && normPlayerAnswer.length < normCorrectAnswer.length) {
+      showFloatingMsg("Respuesta Incompleta. Intente nuevamente");
       return;
+    } else {
+      mistakes++;
+      if (mistakes > 1) {
+        endGame();
+        return;
+      }
     }
   }
   scoreEl.textContent = `Puntaje: ${score}`;
@@ -68,25 +81,25 @@ submitBtn.addEventListener("click", () => {
   showQuestion();
 });
 
-// Si el jugador desea ver opciones, se muestran y la pregunta vale 0.5 (o 1 punto)
 showOptionsBtn.addEventListener("click", () => {
   const currentQ = questions[currentIndex];
-  // Mostrar botones con las opciones
   let optionsHtml = "";
   for (const key in currentQ.opciones) {
     optionsHtml += `<button class="option-btn" onclick="selectOption('${key}')">${key}: ${currentQ.opciones[key]}</button>`;
   }
   optionArea.innerHTML = optionsHtml;
-  // Cambiar valor de la pregunta (por ejemplo, solo suma 1 punto si es correcta)
   showOptionsBtn.classList.add("hidden");
 });
 
 function selectOption(selected) {
   const currentQ = questions[currentIndex];
   if (selected === currentQ.respuesta_correcta) {
-    score += 1; // en este caso vale 1 punto
+    score += 1;
+    highlightSelectedOption(selected, true);
   } else {
     mistakes++;
+    highlightSelectedOption(selected, false);
+    highlightCorrectOption(currentQ.respuesta_correcta);
     if (mistakes > 1) {
       endGame();
       return;
@@ -95,6 +108,24 @@ function selectOption(selected) {
   scoreEl.textContent = `Puntaje: ${score}`;
   currentIndex++;
   showQuestion();
+}
+
+function highlightSelectedOption(option, isCorrect) {
+  const buttons = document.querySelectorAll("#option-area .option-btn");
+  buttons.forEach(btn => {
+    if (btn.textContent.startsWith(option)) {
+      btn.style.backgroundColor = isCorrect ? "green" : "red";
+    }
+  });
+}
+
+function highlightCorrectOption(correctOption) {
+  const buttons = document.querySelectorAll("#option-area .option-btn");
+  buttons.forEach(btn => {
+    if (btn.textContent.startsWith(correctOption)) {
+      btn.style.backgroundColor = "green";
+    }
+  });
 }
 
 function startTimer() {
@@ -119,4 +150,38 @@ function endGame() {
   questionTextEl.textContent = `Juego finalizado. Tu puntaje final es: ${score}`;
   submitBtn.disabled = true;
   answerInput.disabled = true;
+}
+
+function showFloatingMsg(message) {
+  if (floatingMsg) {
+    floatingMsg.textContent = message;
+    floatingMsg.classList.remove("hidden");
+    setTimeout(() => floatingMsg.classList.add("hidden"), 2000);
+  } else {
+    alert(message);
+  }
+}
+
+function normalizeString(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+function levenshteinDistance(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
+  for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
 }

@@ -1,6 +1,6 @@
 /* styles.css */
 
-/* Variables de colores y fuentes */
+/* Variables */
 :root {
     --primary-bg-start: #000428;
     --primary-bg-end: #004e92;
@@ -8,8 +8,11 @@
     --white: #fff;
     --btn-bg: #2196f3;
     --btn-hover-bg: #1e88e5;
+    --small-btn-bg: #555;
+    --small-btn-hover: #666;
     --correct-color: #43cea2;
     --wrong-color: #e73827;
+    --incomplete-msg-bg: rgba(255, 152, 0, 0.9);
   }
   
   body {
@@ -23,7 +26,6 @@
     min-height: 100vh;
   }
   
-  /* Contenedores generales */
   .container {
     background-color: var(--container-bg);
     border-radius: 15px;
@@ -32,46 +34,67 @@
     max-width: 600px;
     text-align: center;
     box-shadow: 0 10px 20px rgba(0,0,0,0.7);
-    margin: 20px;
+    position: relative;
   }
   
-  /* Estilos para la landing page */
-  .landing input[type="text"] {
-    padding: 8px;
-    width: 80%;
-    max-width: 300px;
-    border-radius: 5px;
-    border: none;
-    margin-bottom: 15px;
+  /* Landing page */
+  .landing .main-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 5px;
+    background: linear-gradient(135deg, #ff99cc, #ffcc99, #99ffff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 3px rgba(0,0,0,0.4);
+    margin: 20px 0;
   }
   
-  .landing .buttons,
-  .landing .extra-buttons {
+  .top-right-buttons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin: 10px 0;
+    gap: 5px;
   }
   
-  .btn {
-    background-color: var(--btn-bg);
-    color: var(--white);
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+  .top-right-buttons .btn.small {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    background-color: var(--small-btn-bg);
   }
   
-  .btn:hover {
-    background-color: var(--btn-hover-bg);
-    transform: translateY(-2px);
+  .top-right-buttons .btn.small:hover {
+    background-color: var(--small-btn-hover);
   }
   
-  /* Estilos para el juego (local y online) */
+  /* Botones principales */
+  .main-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .btn.large {
+    font-size: 1.2rem;
+    padding: 12px 20px;
+  }
+  
+  /* Instrucciones */
+  .instructions {
+    background-color: rgba(0,0,0,0.5);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+  
+  /* Juego general */
   .game-container header h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
     margin-bottom: 10px;
   }
   
@@ -113,53 +136,35 @@
     transform: translateY(-2px);
   }
   
-  /* Modales */
-  .modal {
+  /* Modal flotante para respuestas incompletas */
+  .floating-msg {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--incomplete-msg-bg);
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
   }
   
-  .modal .modal-content {
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    position: relative;
-    transform: translateY(-20px);
-    transition: transform 0.3s ease;
-  }
-  
-  .modal.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  .modal.show .modal-content {
-    transform: translateY(0);
-  }
-  
-  .close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 1.4rem;
-    cursor: pointer;
-  }
-  
-  /* Clases de utilidad */
+  /* Ocultar elementos */
   .hidden {
     display: none;
+  }
+  
+  /* Estilos para inputs y botones de envío */
+  input[type=\"text\"] {
+    padding: 8px;
+    width: 80%;
+    max-width: 300px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 10px;
+  }
+  
+  footer p {
+    font-size: 0.8rem;
+    margin-top: 15px;
   }
   

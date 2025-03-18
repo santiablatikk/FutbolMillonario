@@ -1,7 +1,10 @@
 // online.js
 
+// Conectar con Socket.io
+const socket = io();
+
 let onlineQuestions = [];
-let currentOnlineIndex = 0;
+let questionIndex = 0;
 let onlineScore = 0;
 let onlineTimerInterval;
 let onlineTimeLeft = 60; // 1 minuto por pregunta
@@ -14,36 +17,73 @@ const onlineOptionArea = document.getElementById("online-option-area");
 const onlineAnswerInput = document.getElementById("online-answer-input");
 const onlineSubmitBtn = document.getElementById("online-submit-btn");
 const onlineShowOptionsBtn = document.getElementById("online-show-options-btn");
+const floatingMsg = document.getElementById("floating-msg");
+
+const roomIdInput = document.getElementById("room-id");
+const createRoomBtn = document.getElementById("create-room-btn");
+const joinRoomBtn = document.getElementById("join-room-btn");
 
 document.addEventListener("DOMContentLoaded", () => {
   const name = sessionStorage.getItem("playerName") || "Jugador";
   playerDisplayOnline.textContent = `Bienvenido, ${name}`;
-  // Aquí se debería iniciar conexión con el servidor en tiempo real para el modo online
-  // Por simplicidad, se carga un nivel (ej. "media") para este ejemplo
   loadOnlineQuestions();
-  startOnlineTimer();
 });
 
 async function loadOnlineQuestions() {
   try {
     const res = await fetch("/api/questions");
     const data = await res.json();
-    // En modo online se usan preguntas del nivel "media" (por ejemplo)
+    // Usamos preguntas del nivel "media" para el modo online (puedes cambiar según tus necesidades)
     onlineQuestions = data["media"];
-    showOnlineQuestion();
   } catch (error) {
     onlineQuestionTextEl.textContent = "Error al cargar preguntas.";
     console.error(error);
   }
 }
 
+// Crear sala
+createRoomBtn.addEventListener("click", () => {
+  socket.emit("createRoom", { player: sessionStorage.getItem("playerName") }, (response) => {
+    alert(`Sala creada. Código: ${response.roomId}`);
+  });
+});
+
+// Unirse a sala
+joinRoomBtn.addEventListener("click", () => {
+  const code = roomIdInput.value.trim();
+  if (!code) {
+    alert("Ingresa el código de sala");
+    return;
+  }
+  socket.emit("joinRoom", code, (response) => {
+    if (response.success) {
+      alert("Te uniste a la sala. ¡La partida comenzará!");
+      startOnlineGame();
+    } else {
+      alert(response.message);
+    }
+  });
+});
+
+// Cuando el servidor notifique el inicio de la partida
+socket.on("startGame", (data) => {
+  startOnlineGame();
+});
+
+function startOnlineGame() {
+  questionIndex = 0;
+  onlineScore = 0;
+  showOnlineQuestion();
+  startOnlineTimer();
+}
+
 function showOnlineQuestion() {
-  if (currentOnlineIndex >= onlineQuestions.length) {
+  if (questionIndex >= onlineQuestions.length) {
     endOnlineGame();
     return;
   }
   resetOnlineTimer();
-  const currentQ = onlineQuestions[currentOnlineIndex];
+  const currentQ = onlineQuestions[questionIndex];
   onlineQuestionTextEl.textContent = currentQ.pregunta;
   onlineAnswerInput.value = "";
   onlineOptionArea.innerHTML = "";
@@ -52,21 +92,31 @@ function showOnlineQuestion() {
 }
 
 onlineSubmitBtn.addEventListener("click", () => {
-  const currentQ = onlineQuestions[currentOnlineIndex];
+  const currentQ = onlineQuestions[questionIndex];
   const answer = onlineAnswerInput.value.trim();
   if (answer === "") return;
 
-  // Comparación básica (sin opciones)
-  if (answer.toLowerCase() === currentQ.respuesta_correcta.toLowerCase()) {
-    onlineScore += (currentOnlineIndex < 5 ? 1 : 2); // nivel 1: 1 punto; niveles 2-6: 2 puntos
+  const normAnswer = normalizeString(answer);
+  const normCorrect = normalizeString(currentQ.respuesta_correcta);
+  const distance = levenshteinDistance(normAnswer, normCorrect);
+
+  if (normAnswer === normCorrect || distance <= 1) {
+    onlineScore += (questionIndex < 5 ? 1 : 2);
+  } else {
+    if (normCorrect.startsWith(normAnswer) && normAnswer.length < normCorrect.length) {
+      showFloatingMsg("Respuesta Incompleta. Intente nuevamente");
+      return;
+    }
   }
   onlineScoreEl.textContent = `Puntaje: ${onlineScore}`;
-  currentOnlineIndex++;
+  // Enviar respuesta al servidor (ejemplo básico)
+  socket.emit("playerAnswer", { roomId: roomIdInput.value.trim(), answer, questionIndex, playerId: socket.id });
+  questionIndex++;
   showOnlineQuestion();
 });
 
 onlineShowOptionsBtn.addEventListener("click", () => {
-  const currentQ = onlineQuestions[currentOnlineIndex];
+  const currentQ = onlineQuestions[questionIndex];
   let optionsHtml = "";
   for (const key in currentQ.opciones) {
     optionsHtml += `<button class="option-btn" onclick="selectOnlineOption('${key}')">${key}: ${currentQ.opciones[key]}</button>`;
@@ -77,15 +127,12 @@ onlineShowOptionsBtn.addEventListener("click", () => {
 });
 
 function selectOnlineOption(selected) {
-  const currentQ = onlineQuestions[currentOnlineIndex];
-  // Si se usan opciones, la respuesta vale 1 punto en lugar de 2 (para niveles 2-6)
+  const currentQ = onlineQuestions[questionIndex];
   if (selected === currentQ.respuesta_correcta) {
-    onlineScore += (currentOnlineIndex < 5 ? 1 : 1);
-  } else {
-    // Aquí puedes agregar lógica para mostrar la respuesta correcta (cambiando colores, etc.)
+    onlineScore += (questionIndex < 5 ? 1 : 1);
   }
   onlineScoreEl.textContent = `Puntaje: ${onlineScore}`;
-  currentOnlineIndex++;
+  questionIndex++;
   showOnlineQuestion();
 }
 
@@ -94,9 +141,9 @@ function startOnlineTimer() {
     onlineTimeLeft--;
     onlineTimerEl.textContent = `Tiempo: ${formatTime(onlineTimeLeft)}`;
     if (onlineTimeLeft <= 0) {
-      // Avanzar a la siguiente pregunta si se agota el tiempo
-      currentOnlineIndex++;
+      questionIndex++;
       showOnlineQuestion();
+      resetOnlineTimer();
     }
   }, 1000);
 }
@@ -119,4 +166,34 @@ function endOnlineGame() {
   onlineQuestionTextEl.textContent = `Juego finalizado. Puntaje final: ${onlineScore}`;
   onlineSubmitBtn.disabled = true;
   onlineAnswerInput.disabled = true;
+}
+
+function showFloatingMsg(message) {
+  floatingMsg.textContent = message;
+  floatingMsg.classList.remove("hidden");
+  setTimeout(() => { floatingMsg.classList.add("hidden"); }, 2000);
+}
+
+function normalizeString(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+function levenshteinDistance(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
+  for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
 }
