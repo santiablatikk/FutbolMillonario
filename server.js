@@ -12,7 +12,6 @@ const io = new Server(server);
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
-// Endpoint para cargar preguntas
 app.get("/api/questions", async (req, res) => {
   try {
     const questionsPath = path.join(__dirname, "public", "data", "questions.json");
@@ -25,16 +24,12 @@ app.get("/api/questions", async (req, res) => {
   }
 });
 
-// Ejemplo básico de Socket.io para el modo online (puedes extenderlo)
+// Socket.io (Ejemplo base; extiende para salas y sincronización real)
 io.on("connection", (socket) => {
-  console.log(`Nuevo cliente conectado: ${socket.id}`);
-  
-  // Evento para recibir respuestas (aquí podrías validar y actualizar puntajes)
+  console.log(`Cliente conectado: ${socket.id}`);
   socket.on("playerAnswer", (data) => {
-    // Reenviamos la respuesta a la sala o a todos (ejemplo simple)
     io.emit("answerResult", data);
   });
-  
   socket.on("disconnect", () => {
     console.log(`Cliente desconectado: ${socket.id}`);
   });
@@ -42,5 +37,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

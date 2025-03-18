@@ -1,7 +1,7 @@
 {
     "name": "futbolgame",
     "version": "1.0.0",
-    "description": "Juego de fútbol con modos local y online",
+    "description": "Juego de fútbol con modos local y online con estilo premium",
     "main": "server.js",
     "scripts": {
       "start": "node server.js"

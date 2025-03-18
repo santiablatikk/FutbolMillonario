@@ -18,15 +18,20 @@
       <main id="game-area">
         <div id="question-container">
           <p id="question-text">Cargando pregunta...</p>
-          <div id="option-area"></div>
+          <!-- Opciones en grid 2x2 -->
+          <div id="option-area" class="option-grid"></div>
           <button id="show-options-btn" class="btn">Mostrar Opciones</button>
-          <input type="text" id="answer-input" placeholder="Escribe tu respuesta" autocomplete="off" />
-          <button id="submit-btn" class="btn">Comprobar</button>
         </div>
+        <button id="back-btn" class="btn back-btn" onclick="location.href='index.html'">VOLVER AL INICIO</button>
       </main>
-      <footer>
-        <p>Responde lo más rápido y correctamente posible. ¡Suerte!</p>
-      </footer>
+    </div>
+    <!-- Modal de estadísticas -->
+    <div id="stats-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Estadísticas de la Partida</h2>
+        <p id="stats-content"></p>
+        <button id="close-stats-btn" class="btn" onclick="closeStatsModal()">Cerrar</button>
+      </div>
     </div>
     <script src="js/local.js"></script>
   </body>

@@ -6,37 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modo Online - Futbol Game</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <!-- Incluir Socket.io para el cliente --> 
-    <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
     <div class="container game-container">
       <header>
-        <h1>Modo Online (1 vs 1)</h1>
-        <p id="player-display-online"></p>
-        <div id="room-controls">
-          <input type="text" id="room-id" placeholder="Código de sala" />
-          <button id="create-room-btn" class="btn">Crear Sala</button>
-          <button id="join-room-btn" class="btn">Unirse a Sala</button>
-        </div>
-        <p id="online-timer">Tiempo: 01:00</p>
-        <p id="online-score">Puntaje: 0</p>
+        <h1>Modo Online</h1>
       </header>
-      <main id="online-game-area">
-        <div id="online-question-container">
-          <p id="online-question-text">Esperando partida...</p>
-          <div id="online-option-area" class="hidden"></div>
-          <button id="online-show-options-btn" class="btn">Mostrar Opciones</button>
-          <input type="text" id="online-answer-input" placeholder="Escribe tu respuesta" autocomplete=\"off\" /> 
-          <button id="online-submit-btn" class="btn">Comprobar</button>
+      <main>
+        <div class="main-buttons">
+          <a class="btn large" href="online_create.html">Crear Sala</a>
+          <a class="btn large" href="online_join.html">Unirse a una Sala</a>
         </div>
+        <button id="back-online-btn" class="btn back-btn" onclick="location.href='index.html'">VOLVER AL INICIO</button>
       </main>
-      <footer>
-        <p>Si la respuesta está incompleta o tiene errores leves, se te notificará para que lo intentes nuevamente. ¡El que obtenga más puntos gana!</p>
-      </footer>
     </div>
-    <!-- Mensaje flotante para respuesta incompleta --> 
-    <div id="floating-msg" class="floating-msg hidden">Respuesta Incompleta. Intente nuevamente</div>
     <script src="js/online.js"></script>
   </body>
 </html>

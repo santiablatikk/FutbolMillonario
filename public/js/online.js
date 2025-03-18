@@ -1,6 +1,6 @@
 // online.js
 
-// Conectar con Socket.io
+// Conectar con el servidor Socket.io
 const socket = io();
 
 let onlineQuestions = [];
@@ -14,18 +14,19 @@ const onlineTimerEl = document.getElementById("online-timer");
 const onlineScoreEl = document.getElementById("online-score");
 const onlineQuestionTextEl = document.getElementById("online-question-text");
 const onlineOptionArea = document.getElementById("online-option-area");
-const onlineAnswerInput = document.getElementById("online-answer-input");
-const onlineSubmitBtn = document.getElementById("online-submit-btn");
 const onlineShowOptionsBtn = document.getElementById("online-show-options-btn");
 const floatingMsg = document.getElementById("floating-msg");
 
+// Para salas (en las páginas de creación y unión)
 const roomIdInput = document.getElementById("room-id");
 const createRoomBtn = document.getElementById("create-room-btn");
-const joinRoomBtn = document.getElementById("join-room-btn");
+const joinRoomBtn = document.getElementById("joinRoomBtn"); // Si está definido
 
 document.addEventListener("DOMContentLoaded", () => {
   const name = sessionStorage.getItem("playerName") || "Jugador";
-  playerDisplayOnline.textContent = `Bienvenido, ${name}`;
+  if (playerDisplayOnline) {
+    playerDisplayOnline.textContent = `Bienvenido, ${name}`;
+  }
   loadOnlineQuestions();
 });
 
@@ -33,42 +34,13 @@ async function loadOnlineQuestions() {
   try {
     const res = await fetch("/api/questions");
     const data = await res.json();
-    // Usamos preguntas del nivel "media" para el modo online (puedes cambiar según tus necesidades)
+    // Usamos preguntas del nivel "media" (puedes ajustar según necesites)
     onlineQuestions = data["media"];
   } catch (error) {
     onlineQuestionTextEl.textContent = "Error al cargar preguntas.";
     console.error(error);
   }
 }
-
-// Crear sala
-createRoomBtn.addEventListener("click", () => {
-  socket.emit("createRoom", { player: sessionStorage.getItem("playerName") }, (response) => {
-    alert(`Sala creada. Código: ${response.roomId}`);
-  });
-});
-
-// Unirse a sala
-joinRoomBtn.addEventListener("click", () => {
-  const code = roomIdInput.value.trim();
-  if (!code) {
-    alert("Ingresa el código de sala");
-    return;
-  }
-  socket.emit("joinRoom", code, (response) => {
-    if (response.success) {
-      alert("Te uniste a la sala. ¡La partida comenzará!");
-      startOnlineGame();
-    } else {
-      alert(response.message);
-    }
-  });
-});
-
-// Cuando el servidor notifique el inicio de la partida
-socket.on("startGame", (data) => {
-  startOnlineGame();
-});
 
 function startOnlineGame() {
   questionIndex = 0;
@@ -85,51 +57,28 @@ function showOnlineQuestion() {
   resetOnlineTimer();
   const currentQ = onlineQuestions[questionIndex];
   onlineQuestionTextEl.textContent = currentQ.pregunta;
-  onlineAnswerInput.value = "";
   onlineOptionArea.innerHTML = "";
   onlineOptionArea.classList.add("hidden");
   onlineShowOptionsBtn.classList.remove("hidden");
 }
 
-onlineSubmitBtn.addEventListener("click", () => {
-  const currentQ = onlineQuestions[questionIndex];
-  const answer = onlineAnswerInput.value.trim();
-  if (answer === "") return;
-
-  const normAnswer = normalizeString(answer);
-  const normCorrect = normalizeString(currentQ.respuesta_correcta);
-  const distance = levenshteinDistance(normAnswer, normCorrect);
-
-  if (normAnswer === normCorrect || distance <= 1) {
-    onlineScore += (questionIndex < 5 ? 1 : 2);
-  } else {
-    if (normCorrect.startsWith(normAnswer) && normAnswer.length < normCorrect.length) {
-      showFloatingMsg("Respuesta Incompleta. Intente nuevamente");
-      return;
+if (onlineShowOptionsBtn) {
+  onlineShowOptionsBtn.addEventListener("click", () => {
+    const currentQ = onlineQuestions[questionIndex];
+    let optionsHtml = "";
+    for (const key in currentQ.opciones) {
+      optionsHtml += `<button class="option-btn" onclick="selectOnlineOption('${key}')">${key}: ${currentQ.opciones[key]}</button>`;
     }
-  }
-  onlineScoreEl.textContent = `Puntaje: ${onlineScore}`;
-  // Enviar respuesta al servidor (ejemplo básico)
-  socket.emit("playerAnswer", { roomId: roomIdInput.value.trim(), answer, questionIndex, playerId: socket.id });
-  questionIndex++;
-  showOnlineQuestion();
-});
-
-onlineShowOptionsBtn.addEventListener("click", () => {
-  const currentQ = onlineQuestions[questionIndex];
-  let optionsHtml = "";
-  for (const key in currentQ.opciones) {
-    optionsHtml += `<button class="option-btn" onclick="selectOnlineOption('${key}')">${key}: ${currentQ.opciones[key]}</button>`;
-  }
-  onlineOptionArea.innerHTML = optionsHtml;
-  onlineOptionArea.classList.remove("hidden");
-  onlineShowOptionsBtn.classList.add("hidden");
-});
+    onlineOptionArea.innerHTML = optionsHtml;
+    onlineOptionArea.classList.remove("hidden");
+    onlineShowOptionsBtn.classList.add("hidden");
+  });
+}
 
 function selectOnlineOption(selected) {
   const currentQ = onlineQuestions[questionIndex];
   if (selected === currentQ.respuesta_correcta) {
-    onlineScore += (questionIndex < 5 ? 1 : 1);
+    onlineScore += (questionIndex < 5 ? 1 : 2);
   }
   onlineScoreEl.textContent = `Puntaje: ${onlineScore}`;
   questionIndex++;
@@ -164,8 +113,7 @@ function formatTime(seconds) {
 function endOnlineGame() {
   clearInterval(onlineTimerInterval);
   onlineQuestionTextEl.textContent = `Juego finalizado. Puntaje final: ${onlineScore}`;
-  onlineSubmitBtn.disabled = true;
-  onlineAnswerInput.disabled = true;
+  // Aquí podrías deshabilitar botones o inputs
 }
 
 function showFloatingMsg(message) {

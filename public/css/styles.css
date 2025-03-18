@@ -1,133 +1,139 @@
 /* styles.css */
 
-/* Variables */
+/* VARIABLES */
 :root {
-    --primary-bg-start: #000428;
-    --primary-bg-end: #004e92;
-    --container-bg: rgba(0, 0, 0, 0.85);
+    --primary-bg-start: #0d0d2b;
+    --primary-bg-end: #1a1a40;
+    --container-bg: rgba(10, 10, 50, 0.9);
     --white: #fff;
-    --btn-bg: #2196f3;
-    --btn-hover-bg: #1e88e5;
+    --btn-bg: #3d85c6;
+    --btn-hover-bg: #2e6da4;
     --small-btn-bg: #555;
-    --small-btn-hover: #666;
+    --small-btn-hover: #444;
     --correct-color: #43cea2;
     --wrong-color: #e73827;
     --incomplete-msg-bg: rgba(255, 152, 0, 0.9);
   }
   
+  /* FUENTES Y FONDO */
   body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(120deg, var(--primary-bg-start), var(--primary-bg-end));
+    background: linear-gradient(135deg, var(--primary-bg-start), var(--primary-bg-end));
     color: var(--white);
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    background-size: cover;
   }
   
   .container {
     background-color: var(--container-bg);
     border-radius: 15px;
-    padding: 20px;
+    padding: 30px;
     width: 95%;
     max-width: 600px;
     text-align: center;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.7);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
     position: relative;
   }
   
-  /* Landing page */
+  /* LANDING PAGE */
   .landing .main-title {
     font-family: 'Oswald', sans-serif;
-    font-size: 3rem;
+    font-size: 3.5rem;
     letter-spacing: 5px;
     background: linear-gradient(135deg, #ff99cc, #ffcc99, #99ffff);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 2px 2px 3px rgba(0,0,0,0.4);
-    margin: 20px 0;
+    text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.6);
+    margin: 30px 0;
   }
   
   .top-right-buttons {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 15px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
   }
   
   .top-right-buttons .btn.small {
     font-size: 0.8rem;
-    padding: 5px 10px;
+    padding: 6px 12px;
     background-color: var(--small-btn-bg);
+    text-decoration: none;
+    border-radius: 4px;
   }
   
   .top-right-buttons .btn.small:hover {
     background-color: var(--small-btn-hover);
   }
   
-  /* Botones principales */
   .main-buttons {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin: 20px 0;
+    gap: 20px;
+    margin: 30px 0;
   }
   
   .btn.large {
-    font-size: 1.2rem;
-    padding: 12px 20px;
-  }
-  
-  /* Instrucciones */
-  .instructions {
-    background-color: rgba(0,0,0,0.5);
-    padding: 10px 15px;
+    font-size: 1.3rem;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: var(--white);
     border-radius: 8px;
-    margin-top: 15px;
-    font-size: 0.9rem;
-    text-align: left;
+    background-color: var(--btn-bg);
+    transition: background-color 0.3s, transform 0.3s;
   }
   
-  /* Juego general */
+  .btn.large:hover {
+    background-color: var(--btn-hover-bg);
+    transform: translateY(-3px);
+  }
+  
+  .instructions {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-size: 1rem;
+    text-align: left;
+    line-height: 1.4;
+  }
+  
+  /* GENERAL GAME ESTILOS */
   .game-container header h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-family: 'Oswald', sans-serif;
   }
   
   .game-container header p {
     margin: 5px 0;
+    font-size: 1.1rem;
   }
   
-  #game-area, #online-game-area {
-    margin-top: 20px;
-  }
-  
-  #question-container, #online-question-container {
-    margin-bottom: 20px;
-  }
-  
-  #question-text, #online-question-text {
-    font-size: 1.3rem;
+  /* GRID DE OPCIONES */
+  .option-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     margin-bottom: 15px;
   }
   
-  #option-area, #online-option-area {
-    margin-bottom: 15px;
-  }
-  
+  /* BOTONES DE OPCIONES */
   .option-btn {
     background-color: var(--btn-bg);
     border: none;
-    padding: 10px;
+    padding: 12px;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--white);
     cursor: pointer;
-    margin: 5px 0;
     transition: background-color 0.3s, transform 0.3s;
   }
   
@@ -136,35 +142,87 @@
     transform: translateY(-2px);
   }
   
-  /* Modal flotante para respuestas incompletas */
+  /* BOTÓN VOLVER */
+  .back-btn {
+    margin-top: 25px;
+    background-color: var(--small-btn-bg);
+    padding: 10px 15px;
+    font-size: 1rem;
+    border-radius: 6px;
+  }
+  
+  .back-btn:hover {
+    background-color: var(--small-btn-hover);
+  }
+  
+  /* MODAL */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  
+  .modal.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .modal .modal-content {
+    background-color: #222;
+    padding: 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    transform: translateY(-20px);
+    transition: transform 0.4s ease;
+  }
+  
+  .modal.show .modal-content {
+    transform: translateY(0);
+  }
+  
+  /* MENSAJE FLOTANTE */
   .floating-msg {
     position: fixed;
     bottom: 20px;
     right: 20px;
     background-color: var(--incomplete-msg-bg);
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    padding: 12px 18px;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.7);
   }
   
-  /* Ocultar elementos */
   .hidden {
     display: none;
   }
   
-  /* Estilos para inputs y botones de envío */
-  input[type=\"text\"] {
-    padding: 8px;
-    width: 80%;
-    max-width: 300px;
-    border-radius: 5px;
+  /* INPUTS */
+  input[type=\"text\"], input[type=\"password\"] {
+    padding: 10px;
+    width: 85%;
+    max-width: 320px;
+    border-radius: 6px;
     border: none;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 1rem;
   }
   
+  /* FOOTER */
   footer p {
-    font-size: 0.8rem;
-    margin-top: 15px;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    opacity: 0.8;
   }
   
